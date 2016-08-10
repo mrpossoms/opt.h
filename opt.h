@@ -37,7 +37,7 @@ static cli_opt_t* USR_OPT_LIST;
 // and OPT_LIST_END
 #define OPT_LIST_START cli_opt_t OPT_LIST[] = {
 
-#define OPT_LIST_END };\
+#define OPT_LIST_END(HEADER) };\
 USR_OPT_LIST_C = sizeof(OPT_LIST) / sizeof(cli_opt_t);\
 USR_OPT_LIST = OPT_LIST;\
 for(int i = USR_OPT_LIST_C; i--;){\
@@ -57,7 +57,7 @@ for(int i = USR_OPT_LIST_C; i--;){\
 		}\
 	}\
 }\
-if(ARGC == 1) opt_print_usage();\
+if(ARGC == 1) opt_print_usage((HEADER));\
 			
 static inline void opt_print_usage(const char* header)
 {
