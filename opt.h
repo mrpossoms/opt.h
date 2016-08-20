@@ -39,6 +39,10 @@ static cli_opt_t* USR_OPT_LIST;
 #define OPT_LIST_END(HEADER) };\
 USR_OPT_LIST_C = sizeof(OPT_LIST) / sizeof(cli_opt_t);\
 USR_OPT_LIST = OPT_LIST;\
+if(opt_has_flag("-?") || opt_has_flag("--help")){\
+	opt_print_usage((HEADER));\
+	exit(0);\
+}\
 for(int i = USR_OPT_LIST_C; i--;){\
 	cli_opt_t* o = OPT_LIST + i;\
 	if(o->is_kvp){\
