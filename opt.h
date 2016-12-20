@@ -1,10 +1,10 @@
 //------------------------------------------------------------------------------
-//     ___       _         _    
-//    / _ \ _ __| |_      | |_  
+//     ___       _         _
+//    / _ \ _ __| |_      | |_
 //   | (_) | '_ \  _|  _  | ' \
 //    \___/| .__/\__| (_) |_||_|
-//         |_|                  
-// 
+//         |_|
+//
 //	Set of helpful functions for detecting cli arg flags,
 //	key-value pairs and acting on command line arguments.
 //
@@ -24,12 +24,12 @@ typedef struct {
 } cli_opt_t;
 
 static int ARGC;
-static char** ARGV;
+static const char** ARGV;
 static int USR_OPT_LIST_C;
 static cli_opt_t* USR_OPT_LIST;
 
 // Must be invoked at the beginning of Main()
-#define USE_OPT ARGC = argc; ARGV = argv; 
+#define USE_OPT ARGC = argc; ARGV = argv;
 
 // If you are declaring an argument list with handlers
 // all declarations must be placed between OPT_LIST_START
@@ -39,6 +39,10 @@ static cli_opt_t* USR_OPT_LIST;
 #define OPT_LIST_END(HEADER) };\
 USR_OPT_LIST_C = sizeof(OPT_LIST) / sizeof(cli_opt_t);\
 USR_OPT_LIST = OPT_LIST;\
+if(opt_has_flag("-?") || opt_has_flag("--help")){\
+	opt_print_usage((HEADER));\
+	exit(0);\
+}\
 for(int i = USR_OPT_LIST_C; i--;){\
 	cli_opt_t* o = OPT_LIST + i;\
 	if(o->is_kvp){\
@@ -50,7 +54,7 @@ for(int i = USR_OPT_LIST_C; i--;){\
 	}\
 }\
 if(ARGC == 1) opt_print_usage((HEADER));\
-			
+
 static inline void opt_print_usage(const char* header)
 {
 	if(header) printf("%s", header);
@@ -65,7 +69,7 @@ static inline void opt_print_usage(const char* header)
 	}
 
 	printf("]\n\n");
-	
+
 	for(int i = 0; i < USR_OPT_LIST_C; ++i)
 		printf("\t%s : %s\n", USR_OPT_LIST[i].name, USR_OPT_LIST[i].description);
 }
@@ -95,16 +99,16 @@ static inline int opt_index_of(const char* flag)
 static inline int opt_has_flag(const char* flag)
 {
 	return opt_index_of(flag) >= 0;
-}	
+}
 //------------------------------------------------------------------------------
-// @param for_key - key for a key-value-pair existing as an argument in ARGV. 
+// @param for_key - key for a key-value-pair existing as an argument in ARGV.
 //                  The key and value may be present in the same argument so
 //                  long as they are joined by a '=' character.
 // @param value - if 'for_key' is found and a valid value is also found in
 //                ARGV, then value's pointer will be set to said value.
 // @return 0 if 'for_key' or its corresponding value are not found. 1 if both
 //         are found in ARGV.
-static inline int opt_has_value(const char* for_key, char** value)
+static inline int opt_has_value(const char* for_key, const char** value)
 {
 	int i = opt_index_of(for_key);
 
@@ -124,7 +128,7 @@ static inline int opt_has_value(const char* for_key, char** value)
 		*value = (char*)matched_key + key_len + 1;
 		return 1;
 	}
-	
+
 	// if we got here, then there was no kv-pair in the argument
 	// look for the next argument, is there one?
 	if(ARGC > i + 1){
