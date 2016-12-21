@@ -20,7 +20,7 @@ typedef struct {
 	const char* name;
 	const char* description;
 	int is_kvp;
-	void (*opt)(char* val, int present);
+	void (*opt)(const char* val, int present);
 } cli_opt_t;
 
 static int ARGC;
@@ -46,7 +46,7 @@ if(opt_has_flag("-?") || opt_has_flag("--help")){\
 for(int i = USR_OPT_LIST_C; i--;){\
 	cli_opt_t* o = OPT_LIST + i;\
 	if(o->is_kvp){\
-		char* value = NULL;\
+		const char* value = NULL;\
 		int present = opt_has_value(o->name, &value);\
 		o->opt(value, present);\
 	} else {\
